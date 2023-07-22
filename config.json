@@ -1,0 +1,44 @@
+{
+	"game": {
+		"updateRate": 10,
+		"startingHP": 3,
+		"roundTime": 300000,
+
+		"hpSelector": "#hp",
+		"timerSelector": "#timer",
+		"completenessSelector": "#completeness"
+	},
+	"racket": {
+		"width": 72,
+		"height": 8,
+		"speed": 3,
+		"bottom": 24
+	},
+	"ball": {
+		"radius": 6,
+		"speed": 2
+	},
+	"brick": {
+		"size": 16
+	},
+	"physicsEngine": {
+		"racketReboundFactor": 1
+	},
+	"drawer": {
+		"canvasSelector": "#canvas",
+		"fontSize": 10,
+		"fontFamily": "sans-serif",
+		"textColor": "#fff",
+
+		"racketColor": "#88f",
+		"ballColor": "#fff",
+		"gridColor": "#fff2"
+	},
+	"editor": {
+		"defaultSize": 25,
+		"defaultColor": "#dddddd",
+		"defaultHP": 1,
+		"maxSaveSize": 102400,
+		"allowedSaveExtensions": [ ".json" ]
+	}
+}
