@@ -1,7 +1,7 @@
 import Brick from "../game/Brick.js"
 import Drawer from "../game/Drawer.js"
 import Field from "../game/Field.js"
-import { mapToBricks, getBlankMap, bricksToSave, saveToBricks, saveToMap } from "../utils/map.js"
+import { mapToBricks, getBlankMap, bricksToSave, saveToBricks, saveToMap, getCompressedSave, getMegaCompressedSave } from "../utils/map.js"
 
 
 
@@ -147,7 +147,7 @@ export default class Editor {
 	}
 
 	save() {
-		const saveData = bricksToSave(this.bricks, this.field.mapSize);
+		const saveData = getMegaCompressedSave(this.bricks, this.field.mapSize);
 		const filename = 'map.json';
 		const file = new Blob([saveData], { type: 'application/json' });
 

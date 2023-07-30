@@ -21,8 +21,13 @@
 	"brick": {
 		"size": 16
 	},
+	"bonus": {
+		"radius": 6,
+		"maxSpeed": 2
+	},
 	"physicsEngine": {
-		"racketReboundFactor": 1
+		"racketReboundFactor": 1,
+		"gravity": 0.05
 	},
 	"drawer": {
 		"canvasSelector": "#canvas",

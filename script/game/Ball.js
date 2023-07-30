@@ -1,7 +1,7 @@
 import { Circle, Vector } from "../utils/geometry.js"
 
 export default class Ball extends Circle {
-	constructor({ x = 0, y = 0, r = 1, dX = 0, dY = 1, speed = 0 }) {
+	constructor({ x = 0, y = 0, radius: r = 1, dX = 0, dY = 1, speed = 0 }) {
 		super(x, y, r)
 		this.speed = speed
 		this.motion = new Vector(dX, dY)

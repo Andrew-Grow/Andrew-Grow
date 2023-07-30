@@ -7,9 +7,11 @@ import Racket from "./Racket.js"
 import Ball from "./Ball.js"
 import Brick from "./Brick.js"
 import { displayHP, displayTime, displayCompleteness } from "../utils/ui.js"
+import Bonus from "./Bonus.js"
 
 export default class Game {
 	constructor(cfg, map) {
+		this.cfg = cfg
 		this.player = new Player()
 
 		// map
@@ -30,8 +32,10 @@ export default class Game {
 
 		// balls
 		this.balls = []
-		const newBall = this.addBall({ speed: cfg.ball.speed, r: cfg.ball.radius })
-		this.respawnBall(newBall)
+		this.addBall()
+
+		// bonuses
+		this.bonuses = []
 
 		// hp
 		this.hp = cfg.game.startingHP
@@ -66,15 +70,33 @@ export default class Game {
 		// Process Collisions
 		for (let collision of collisions) {
 			if (collision.ball && collision.field) {
-				this.respawnBall(collision.ball)
-				this.hp--
+				this.removeBall(collision.ball)
+				if (!this.balls.length) {
+					this.hp--
+					this.addBall()
+				}
 			}
+
 			if (collision.ball && collision.brick) {
 				collision.brick.damage()
 				if (collision.brick.hp <= 0) {
 					this.removeBrick(collision.brick)
 					this.bricksLeft--
+					if (Math.random() * 100 < 100) this.addBonus({
+						x: collision.brick.x + collision.brick.width / 2,
+						y: collision.brick.y + collision.brick.height / 2
+					})
 				}
+			}
+
+			if (collision.bonus && collision.racket) {
+				this.removeBonus(collision.bonus)
+				if (collision.bonus.type == 'hp' && this.hp < 3) this.hp++
+				else if (collision.bonus.type == 'ball') this.addBall()
+			}
+
+			if (collision.bonus && collision.field) {
+				this.removeBonus(collision.bonus)
 			}
 		}
 
@@ -117,7 +139,14 @@ export default class Game {
 	// Game Events
 
 	addBall(props) {
-		const newBall = new Ball(props)
+		const newBall = new Ball({
+			x: this.racket.left + (this.racket.width / 2),
+			y: this.racket.top,
+			dX: Math.random() - 0.5,
+			dY: -1,
+			...this.cfg.ball,
+			...props
+		})
 		this.balls.push(newBall)
 		return newBall
 	}
@@ -130,9 +159,27 @@ export default class Game {
 		ball.setDirection(0, 1)
 	}
 
+	removeBall(ball) {
+		this.balls = this.balls.filter(el => el !== ball)
+	}
+
 	removeBrick(brick) {
 		const x = Math.floor(brick.x / brick.width)
 		const y = Math.floor(brick.y / brick.width)
 		this.bricks[x][y] = false
+	}
+
+	addBonus(props) {
+		const types = ['hp', 'ball']
+		this.bonuses.push(new Bonus({
+			...this.cfg.bonus,
+			...props,
+			dY: -1,
+			type: types[Math.floor(Math.random() * types.length)]
+		}))
+	}
+
+	removeBonus(bonus) {
+		this.bonuses = this.bonuses.filter(el => el !== bonus)
 	}
 }
