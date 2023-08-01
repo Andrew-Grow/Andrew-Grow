@@ -7,16 +7,25 @@ const keymap = {
 	'в': 'right',
 }
 
-const pressedKeys = {}
-
 export default class Player {
 	constructor() {
+		this.pressedKeys = {}
+		this.touches = {}
+
 		document.addEventListener('keydown', (e) => {
-			pressedKeys[e.key.toLowerCase()] = true
+			this.pressedKeys[e.key.toLowerCase()] = true
 		})
 
 		document.addEventListener('keyup', (e) => {
-			delete pressedKeys[e.key.toLowerCase()]
+			delete this.pressedKeys[e.key.toLowerCase()]
+		})
+
+		document.addEventListener('touchstart', (e) => {
+			this.touches = e.targetTouches
+		})
+
+		document.addEventListener('touchend', (e) => {
+			this.touches = e.targetTouches
 		})
 	}
 
@@ -26,8 +35,13 @@ export default class Player {
 			right: false
 		}
 
-		for (let key in pressedKeys) {
+		for (let key in this.pressedKeys) {
 			if (keymap[key]) input[keymap[key]] = true
+		}
+
+		for (let key in this.touches) {
+			if (this.touches[key].clientX < window.innerWidth / 2) input.left = true
+			else if (this.touches[key].clientX > window.innerWidth / 2) input.right = true
 		}
 
 		if (input.left == input.right) return 0
