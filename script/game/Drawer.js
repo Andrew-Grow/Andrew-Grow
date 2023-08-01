@@ -36,6 +36,9 @@ export default class Drawer {
 		if (this.game.bonuses?.length) for (let bonus of this.game.bonuses) {
 			this.drawBonus(bonus)
 		}
+		for (let effect of this.game.effects) {
+			this.drawEffect(effect)
+		}
 	}
 
 	drawBall(ball) {
@@ -84,14 +87,31 @@ export default class Drawer {
 	}
 
 	drawBonus(bonus) {
-		let emoji = ''
+		let emoji = '❓'
 		if (bonus.type == 'hp') emoji = '❤️'
 		else if (bonus.type == 'ball') emoji = '🥎'
+		else if (bonus.type == 'shield') emoji = '🛡️'
 		this.ctx.font = (this.scale * this.cfg.fontSize * 1.5) + 'px ' + this.cfg.fontFamily
 		this.ctx.fillText(emoji,
 			bonus.x * this.scale,
 			bonus.y * this.scale
 		)
+	}
+
+	drawEffect() {
+		const x1 = (this.game.field.left) * this.scale,
+			y1 = (this.game.field.bottom - 16) * this.scale,
+			x2 = this.game.field.right * this.scale,
+			y2 = this.game.field.bottom * this.scale
+
+		const grd = this.ctx.createLinearGradient(x1, y1, x1, y2)
+		grd.addColorStop(0, '#88f0')
+		grd.addColorStop(1, '#88f8')
+		this.ctx.fillStyle = grd
+
+		this.ctx.beginPath();
+		this.ctx.rect(x1, y1, x2, y2);
+		this.ctx.fill()
 	}
 
 	drawGrid() {

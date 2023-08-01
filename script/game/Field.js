@@ -6,6 +6,7 @@ export default class Field extends Rectangle {
 			mapSize * brickSize * 4 / 3 :
 			mapSize * brickSize)
 		this.brickSize = brickSize
+		this.collisions = false
 	}
 
 	setSize(mapSize) {

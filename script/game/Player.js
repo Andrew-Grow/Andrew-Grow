@@ -12,12 +12,10 @@ const pressedKeys = {}
 export default class Player {
 	constructor() {
 		document.addEventListener('keydown', (e) => {
-			const key = e.key.toLowerCase()
 			pressedKeys[e.key.toLowerCase()] = true
 		})
 
 		document.addEventListener('keyup', (e) => {
-			const key = e.key.toLowerCase()
 			delete pressedKeys[e.key.toLowerCase()]
 		})
 	}

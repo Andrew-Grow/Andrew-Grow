@@ -37,8 +37,14 @@ export default class PhysicsEngine {
 			if (ball.left <= this.game.field.left) ball.motion.x = Math.abs(ball.motion.x)
 			if (ball.right >= this.game.field.right) ball.motion.x = -Math.abs(ball.motion.x)
 			if (ball.top <= this.game.field.top) ball.motion.y = Math.abs(ball.motion.y)
+			if (ball.bottom >= this.game.field.bottom && this.game.field.collisions)
+				ball.motion.reflect(new Vector(0, -1))
 			if (ball.top >= this.game.field.bottom)
-				collisions.push({ ball, field: this.game.field, point: new Point(ball.x, this.game.field.bottom) })
+				collisions.push({
+					ball,
+					field: this.game.field,
+					point: new Point(ball.x, this.game.field.bottom)
+				})
 
 			// racket
 			if (ball.bottom >= this.game.racket.top && ball.motion.y >= 0) {

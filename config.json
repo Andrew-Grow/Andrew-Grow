@@ -3,6 +3,7 @@
 		"updateRate": 10,
 		"startingHP": 3,
 		"roundTime": 300000,
+		"effectDuration": 15000,
 
 		"hpSelector": "#hp",
 		"timerSelector": "#timer",

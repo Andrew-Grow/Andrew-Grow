@@ -6,6 +6,5 @@ export default class Bonus extends Circle {
 		this.motion = new Vector(dX, dY)
 		this.maxSpeed = maxSpeed
 		this.type = type
-		console.log(this.type)
 	}
 }

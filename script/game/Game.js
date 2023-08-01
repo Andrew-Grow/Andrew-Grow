@@ -8,6 +8,7 @@ import Ball from "./Ball.js"
 import Brick from "./Brick.js"
 import { displayHP, displayTime, displayCompleteness } from "../utils/ui.js"
 import Bonus from "./Bonus.js"
+import Effect from "./Effect.js"
 
 export default class Game {
 	constructor(cfg, map) {
@@ -36,13 +37,14 @@ export default class Game {
 
 		// bonuses
 		this.bonuses = []
+		this.effects = []
 
 		// hp
 		this.hp = cfg.game.startingHP
 
 		// time
-		this.endTime = performance.now() + cfg.game.roundTime
-		this.currentTime = 0
+		this.currentTime = performance.now()
+		this.endTime = this.currentTime + cfg.game.roundTime
 
 		// engine
 		this.updateRate = cfg.game.updateRate
@@ -81,7 +83,6 @@ export default class Game {
 				collision.brick.damage()
 				if (collision.brick.hp <= 0) {
 					this.removeBrick(collision.brick)
-					this.bricksLeft--
 					if (Math.random() * 100 < 100) this.addBonus({
 						x: collision.brick.x + collision.brick.width / 2,
 						y: collision.brick.y + collision.brick.height / 2
@@ -93,6 +94,7 @@ export default class Game {
 				this.removeBonus(collision.bonus)
 				if (collision.bonus.type == 'hp' && this.hp < 3) this.hp++
 				else if (collision.bonus.type == 'ball') this.addBall()
+				else if (collision.bonus.type == 'shield') this.addEffect()
 			}
 
 			if (collision.bonus && collision.field) {
@@ -101,6 +103,10 @@ export default class Game {
 		}
 
 		// Following Game Logic
+		for (let effect of this.effects) {
+			if (effect.start + effect.duration <= this.currentTime) this.removeEffect(effect)
+		}
+
 		const timeLeft = this.endTime - this.currentTime
 		const completeness = (this.totalBricks - this.bricksLeft) / this.totalBricks
 
@@ -151,14 +157,6 @@ export default class Game {
 		return newBall
 	}
 
-	respawnBall(ball) {
-		ball.setPosition(
-			this.racket.left + (this.racket.width / 2) + (Math.random() * 20 - 10),
-			this.racket.top - 20
-		)
-		ball.setDirection(0, 1)
-	}
-
 	removeBall(ball) {
 		this.balls = this.balls.filter(el => el !== ball)
 	}
@@ -166,11 +164,15 @@ export default class Game {
 	removeBrick(brick) {
 		const x = Math.floor(brick.x / brick.width)
 		const y = Math.floor(brick.y / brick.width)
-		this.bricks[x][y] = false
+		if (this.bricks[x][y]) {
+			this.bricksLeft--
+			this.bricks[x][y] = false
+		}
+		console.log('bricks Left: ', this.bricksLeft)
 	}
 
 	addBonus(props) {
-		const types = ['hp', 'ball']
+		const types = ['hp', 'ball', 'shield']
 		this.bonuses.push(new Bonus({
 			...this.cfg.bonus,
 			...props,
@@ -181,5 +183,21 @@ export default class Game {
 
 	removeBonus(bonus) {
 		this.bonuses = this.bonuses.filter(el => el !== bonus)
+	}
+
+	addEffect() {
+		if (this.effects.length) this.effects[0].start = this.currentTime
+		else {
+			this.effects.push(new Effect({
+				duration: this.cfg.game.effectDuration,
+				start: this.currentTime
+			}))
+			this.field.collisions = true
+		}
+	}
+
+	removeEffect(effect) {
+		this.effects = this.effects.filter(el => el !== effect)
+		this.field.collisions = false
 	}
 }
