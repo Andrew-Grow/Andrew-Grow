@@ -38,7 +38,7 @@ export default class PhysicsEngine {
 			if (ball.right >= this.game.field.right) ball.motion.x = -Math.abs(ball.motion.x)
 			if (ball.top <= this.game.field.top) ball.motion.y = Math.abs(ball.motion.y)
 			if (ball.bottom >= this.game.field.bottom && this.game.field.collisions)
-				ball.motion.reflect(new Vector(0, -1))
+				ball.motion.y = -Math.abs(ball.motion.y)
 			if (ball.top >= this.game.field.bottom)
 				collisions.push({
 					ball,
@@ -77,7 +77,7 @@ export default class PhysicsEngine {
 					}
 				}
 			}
-			if (closestCollision) ball.motion.reflect(closestCollision)
+			if (closestCollision && !ball.effects.fireball) ball.motion.reflect(closestCollision)
 		}
 		for (let bonus of this.game.bonuses) {
 			// edges

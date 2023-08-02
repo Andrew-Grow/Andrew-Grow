@@ -37,7 +37,8 @@ export default class Game {
 
 		// bonuses
 		this.bonuses = []
-		this.effects = []
+		this.effects = {}
+		this.bonusSpawnTimestamp = 0
 
 		// hp
 		this.hp = cfg.game.startingHP
@@ -62,12 +63,21 @@ export default class Game {
 
 	gameloop() {
 		// Handle User Input
-		if (this.player.moving) this.racket.motion.x = this.player.moving * this.racket.speed
-		else this.racket.motion.x = 0
+		if (this.player.input.left != this.player.input.right) {
+			if (this.player.input.left) this.racket.motion.x = -this.racket.speed
+			else this.racket.motion.x = this.racket.speed
+		} else this.racket.motion.x = 0
+
+		if (this.player.input.action)
+			for (let ball of this.balls)
+				if (!ball.motion.length) ball.throw(Math.random() - 0.5, -1)
 
 		// Update Game Objects
 		const collisions = this.physicsEngine.step()
 		this.currentTime = performance.now()
+		for (let ball of this.balls) {
+			if (!ball.motion.length) ball.x = this.racket.x + this.racket.width / 2
+		}
 
 		// Process Collisions
 		for (let collision of collisions) {
@@ -83,10 +93,11 @@ export default class Game {
 				collision.brick.damage()
 				if (collision.brick.hp <= 0) {
 					this.removeBrick(collision.brick)
-					if (Math.random() * 100 < 100) this.addBonus({
-						x: collision.brick.x + collision.brick.width / 2,
-						y: collision.brick.y + collision.brick.height / 2
-					})
+					if (Math.random() < this.cfg.game.bonusProbability && (!this.bonusSpawnTimestamp || this.currentTime > this.bonusSpawnTimestamp + this.cfg.game.bonusCooldown))
+						this.addBonus({
+							x: collision.brick.x + collision.brick.width / 2,
+							y: collision.brick.y + collision.brick.height / 2
+						})
 				}
 			}
 
@@ -94,7 +105,11 @@ export default class Game {
 				this.removeBonus(collision.bonus)
 				if (collision.bonus.type == 'hp' && this.hp < 3) this.hp++
 				else if (collision.bonus.type == 'ball') this.addBall()
-				else if (collision.bonus.type == 'shield') this.addEffect()
+				else if (
+					collision.bonus.type == 'shield' ||
+					collision.bonus.type == 'speed' ||
+					collision.bonus.type == 'fireball'
+				) this.addEffect(collision.bonus.type)
 			}
 
 			if (collision.bonus && collision.field) {
@@ -103,8 +118,8 @@ export default class Game {
 		}
 
 		// Following Game Logic
-		for (let effect of this.effects) {
-			if (effect.start + effect.duration <= this.currentTime) this.removeEffect(effect)
+		for (let key in this.effects) {
+			if (this.effects[key].start + this.effects[key].duration <= this.currentTime) this.removeEffect(key)
 		}
 
 		const timeLeft = this.endTime - this.currentTime
@@ -115,7 +130,7 @@ export default class Game {
 		displayCompleteness(this.completenessElement, completeness)
 
 		if (this.bricksLeft <= 0) this.end(true)
-		else if (this.hp <= 0 || timeLeft <= 0) this.end(false)
+		else if (this.hp < 0 || timeLeft <= 0) this.end(false)
 	}
 
 	render(timeStamp) {
@@ -147,9 +162,9 @@ export default class Game {
 	addBall(props) {
 		const newBall = new Ball({
 			x: this.racket.left + (this.racket.width / 2),
-			y: this.racket.top,
-			dX: Math.random() - 0.5,
-			dY: -1,
+			y: this.racket.top - this.cfg.ball.radius,
+			dX: 0,
+			dY: 0,
 			...this.cfg.ball,
 			...props
 		})
@@ -168,36 +183,52 @@ export default class Game {
 			this.bricksLeft--
 			this.bricks[x][y] = false
 		}
-		console.log('bricks Left: ', this.bricksLeft)
 	}
 
 	addBonus(props) {
-		const types = ['hp', 'ball', 'shield']
+		const types = ['hp', 'ball', 'shield', 'speed', 'fireball']
 		this.bonuses.push(new Bonus({
 			...this.cfg.bonus,
 			...props,
 			dY: -1,
 			type: types[Math.floor(Math.random() * types.length)]
 		}))
+		this.bonusSpawnTimestamp = this.currentTime
 	}
 
 	removeBonus(bonus) {
 		this.bonuses = this.bonuses.filter(el => el !== bonus)
 	}
 
-	addEffect() {
-		if (this.effects.length) this.effects[0].start = this.currentTime
-		else {
-			this.effects.push(new Effect({
-				duration: this.cfg.game.effectDuration,
-				start: this.currentTime
-			}))
-			this.field.collisions = true
+	addEffect(type) {
+		if (this.effects[type]) this.removeEffect(type)
+
+		if (type == 'shield') this.field.collisions = true
+
+		if (type == 'speed') for (let ball of this.balls) {
+			ball.setSpeed(ball.speed * this.cfg.effects.speed.factor)
+			ball.effects.speed = true
 		}
+
+		if (type == 'fireball') for (let ball of this.balls) {
+			ball.effects.fireball = true
+		}
+
+		this.effects[type] = (new Effect({
+			duration: this.cfg.effects[type].duration,
+			start: this.currentTime
+		}))
 	}
 
-	removeEffect(effect) {
-		this.effects = this.effects.filter(el => el !== effect)
-		this.field.collisions = false
+	removeEffect(type) {
+		delete this.effects[type]
+		if (type == 'shield') this.field.collisions = false
+		if (type == 'speed') for (let ball of this.balls) {
+			ball.setSpeed(this.cfg.ball.speed)
+			delete ball.effects.speed
+		}
+		if (type == 'fireball') for (let ball of this.balls) {
+			delete ball.effects.fireball
+		}
 	}
 }

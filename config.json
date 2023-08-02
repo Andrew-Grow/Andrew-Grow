@@ -3,7 +3,8 @@
 		"updateRate": 10,
 		"startingHP": 3,
 		"roundTime": 300000,
-		"effectDuration": 15000,
+		"bonusCooldown": 500,
+		"bonusProbability": 0.5,
 
 		"hpSelector": "#hp",
 		"timerSelector": "#timer",
@@ -26,6 +27,18 @@
 		"radius": 6,
 		"maxSpeed": 2
 	},
+	"effects": {
+		"shield": {
+			"duration": 10000
+		},
+		"speed": {
+			"duration": 10000,
+			"factor": 1.5
+		},
+		"fireball": {
+			"duration": 1000
+		}
+	},
 	"physicsEngine": {
 		"racketReboundFactor": 1,
 		"gravity": 0.05
@@ -38,6 +51,8 @@
 
 		"racketColor": "#88f",
 		"ballColor": "#fff",
+		"acceleratedBallColor": "#fd4",
+		"fireballColor": "#f44",
 		"gridColor": "#fff2"
 	},
 	"editor": {

@@ -7,6 +7,7 @@ export default class Ball extends Circle {
 		this.motion = new Vector(dX, dY)
 		this.motion.setLength(this.speed)
 		this.colliding = {}
+		this.effects = {}
 	}
 
 	setDirection(dX, dY) {
@@ -16,5 +17,10 @@ export default class Ball extends Circle {
 	setSpeed(val) {
 		this.speed = val
 		this.motion.setLength(val)
+	}
+
+	throw(dX, dY) {
+		this.motion.set(dX, dY)
+		this.motion.setLength(this.speed)
 	}
 }

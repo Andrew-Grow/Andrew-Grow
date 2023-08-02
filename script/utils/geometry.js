@@ -54,7 +54,7 @@ export class Vector extends Point {
 	}
 
 	normalize() {
-		this.scale(1 / this.length)
+		if (this.length) this.scale(1 / this.length)
 		return this
 	}
 
@@ -63,7 +63,7 @@ export class Vector extends Point {
 	}
 
 	setLength(val) {
-		this.scale(val / this.length)
+		if (this.length) this.scale(val / this.length)
 	}
 
 	setDirection(v) {

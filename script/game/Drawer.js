@@ -36,15 +36,20 @@ export default class Drawer {
 		if (this.game.bonuses?.length) for (let bonus of this.game.bonuses) {
 			this.drawBonus(bonus)
 		}
-		for (let effect of this.game.effects) {
-			this.drawEffect(effect)
+		for (let key in this.game.effects) {
+			this.drawEffect(key)
 		}
 	}
+
+	// Game Objects
 
 	drawBall(ball) {
 		const [offsetX, offsetY] = this.getMotionsOffset(ball)
 
-		this.ctx.fillStyle = this.cfg.ballColor
+		if (ball.effects.fireball) this.ctx.fillStyle = this.cfg.fireballColor
+		else if (ball.effects.speed) this.ctx.fillStyle = this.cfg.acceleratedBallColor
+		else this.ctx.fillStyle = this.cfg.ballColor
+
 		this.ctx.beginPath()
 		this.ctx.arc(
 			(ball.x + offsetX) * this.scale,
@@ -91,6 +96,8 @@ export default class Drawer {
 		if (bonus.type == 'hp') emoji = '❤️'
 		else if (bonus.type == 'ball') emoji = '🥎'
 		else if (bonus.type == 'shield') emoji = '🛡️'
+		else if (bonus.type == 'speed') emoji = '⚡'
+		else if (bonus.type == 'fireball') emoji = '☄️'
 		this.ctx.font = (this.scale * this.cfg.fontSize * 1.5) + 'px ' + this.cfg.fontFamily
 		this.ctx.fillText(emoji,
 			bonus.x * this.scale,
@@ -98,7 +105,13 @@ export default class Drawer {
 		)
 	}
 
-	drawEffect() {
+	//Effects
+
+	drawEffect(effect) {
+		if (effect == 'shield') this.drawShield()
+	}
+
+	drawShield() {
 		const x1 = (this.game.field.left) * this.scale,
 			y1 = (this.game.field.bottom - 16) * this.scale,
 			x2 = this.game.field.right * this.scale,
@@ -114,6 +127,8 @@ export default class Drawer {
 		this.ctx.fill()
 	}
 
+	// Editor
+
 	drawGrid() {
 		this.ctx.fillStyle = this.cfg.gridColor
 		for (let i = 0; i < this.game.field.width / this.game.field.brickSize; i++) {
@@ -127,6 +142,8 @@ export default class Drawer {
 			}
 		}
 	}
+
+	// Helpers
 
 	getMotionsOffset(object) {
 		const offsetX = object.motion.x * this.msFromLastUpdate / this.game.updateRate

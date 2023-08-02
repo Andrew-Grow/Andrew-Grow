@@ -1,10 +1,9 @@
 const keymap = {
-	'a': 'left',
-	'd': 'right',
+	'keya': 'left',
+	'keyd': 'right',
 	'arrowleft': 'left',
 	'arrowright': 'right',
-	'ф': 'left',
-	'в': 'right',
+	'space': 'action',
 }
 
 export default class Player {
@@ -13,26 +12,24 @@ export default class Player {
 		this.touches = {}
 
 		document.addEventListener('keydown', (e) => {
-			this.pressedKeys[e.key.toLowerCase()] = true
+			this.pressedKeys[e.code.toLowerCase()] = true
 		})
-
 		document.addEventListener('keyup', (e) => {
-			delete this.pressedKeys[e.key.toLowerCase()]
+			delete this.pressedKeys[e.code.toLowerCase()]
 		})
-
 		document.addEventListener('touchstart', (e) => {
 			this.touches = e.targetTouches
 		})
-
 		document.addEventListener('touchend', (e) => {
 			this.touches = e.targetTouches
 		})
 	}
 
-	get moving() {
+	get input() {
 		const input = {
 			left: false,
-			right: false
+			right: false,
+			action: false
 		}
 
 		for (let key in this.pressedKeys) {
@@ -40,12 +37,11 @@ export default class Player {
 		}
 
 		for (let key in this.touches) {
-			if (this.touches[key].clientX < window.innerWidth / 2) input.left = true
-			else if (this.touches[key].clientX > window.innerWidth / 2) input.right = true
+			if (this.touches[key].clientX < window.innerWidth / 3) input.left = true
+			else if (this.touches[key].clientX > window.innerWidth / 3 * 2) input.right = true
+			else if (this.touches[key].clientX) input.action = true
 		}
 
-		if (input.left == input.right) return 0
-		else if (input.left) return -1
-		else return 1
+		return input
 	}
 }
