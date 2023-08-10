@@ -13,7 +13,7 @@ import Effect from "./Effect.js"
 export default class Game {
 	constructor(cfg, map) {
 		this.cfg = cfg
-		this.player = new Player()
+		this.player = new Player(document.querySelector(cfg.drawer.canvasSelector))
 
 		// map
 		this.bricks = mapToBricks(map, cfg.brick.size)
@@ -24,11 +24,9 @@ export default class Game {
 
 		//racket
 		this.racket = new Racket({
+			...cfg.racket,
 			x: (this.field.width - cfg.racket.width) / 2,
-			y: this.field.height - cfg.racket.bottom,
-			width: cfg.racket.width,
-			height: cfg.racket.height,
-			speed: cfg.racket.speed
+			y: this.field.height - cfg.racket.bottom
 		})
 
 		// balls
@@ -63,7 +61,15 @@ export default class Game {
 
 	gameloop() {
 		// Handle User Input
-		if (this.player.input.left != this.player.input.right) {
+		if (this.player.mouse.x) {
+			const fieldX = this.player.mouse.x * (this.field.width / this.drawer.canvas.offsetWidth)
+			if (fieldX > this.racket.right) this.racket.motion.x = this.racket.speed * 2
+			else if (fieldX < this.racket.left) this.racket.motion.x = -this.racket.speed * 2
+			else {
+				this.racket.x = fieldX - this.racket.width / 2
+				this.racket.motion.x = 0
+			}
+		} else if (this.player.input.left != this.player.input.right) {
 			if (this.player.input.left) this.racket.motion.x = -this.racket.speed
 			else this.racket.motion.x = this.racket.speed
 		} else this.racket.motion.x = 0
@@ -104,7 +110,7 @@ export default class Game {
 			if (collision.bonus && collision.racket) {
 				this.removeBonus(collision.bonus)
 				if (collision.bonus.type == 'hp' && this.hp < 3) this.hp++
-				else if (collision.bonus.type == 'ball') this.addBall()
+				else if (collision.bonus.type == 'ball') this.addBall().throw(Math.random() - 0.5, -1)
 				else if (
 					collision.bonus.type == 'shield' ||
 					collision.bonus.type == 'speed' ||
@@ -133,9 +139,8 @@ export default class Game {
 		else if (this.hp < 0 || timeLeft <= 0) this.end(false)
 	}
 
-	render(timeStamp) {
-		const msFromLastUpdate = timeStamp - this.currentTime
-		this.drawer.draw(msFromLastUpdate)
+	render() {
+		this.drawer.draw(this.currentTime)
 		if (this.continues) window.requestAnimationFrame(this.render.bind(this))
 	}
 

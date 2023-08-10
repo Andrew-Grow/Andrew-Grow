@@ -3,8 +3,9 @@
 		"updateRate": 10,
 		"startingHP": 3,
 		"roundTime": 300000,
-		"bonusCooldown": 500,
+		"bonusCooldown": 250,
 		"bonusProbability": 0.5,
+		"mouseThreshold": 20,
 
 		"hpSelector": "#hp",
 		"timerSelector": "#timer",
@@ -13,7 +14,7 @@
 	"racket": {
 		"width": 72,
 		"height": 8,
-		"speed": 3,
+		"speed": 4,
 		"bottom": 24
 	},
 	"ball": {
@@ -60,6 +61,6 @@
 		"defaultColor": "#dddddd",
 		"defaultHP": 1,
 		"maxSaveSize": 102400,
-		"allowedSaveExtensions": [ ".json" ]
+		"allowedSaveExtensions": [ ".json", ".bbmap" ]
 	}
 }

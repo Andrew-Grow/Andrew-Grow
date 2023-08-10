@@ -13,12 +13,11 @@ export default class Drawer {
 		this.ctx.textAlign = "center"
 		this.ctx.textBaseline = 'middle'
 
-
 		this.msFromLastUpdate = 0
 	}
 
-	draw(msFromLastUpdate) {
-		if (msFromLastUpdate) this.msFromLastUpdate = msFromLastUpdate
+	draw(lastUpdateTime) {
+		this.msFromLastUpdate = lastUpdateTime ? performance.now() - lastUpdateTime : 0
 		if (this.game.field.width != this.lastRenderWidth) this.updateScale()
 
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)

@@ -140,4 +140,5 @@ export class Rectangle extends Shape {
 	get top() { return this.pos.y }
 	get right() { return this.pos.x + this.size.x }
 	get bottom() { return this.pos.y + this.size.y }
+	get center() { return new Point(this.x + this.width / 2, this.y + this.height / 2) }
 }

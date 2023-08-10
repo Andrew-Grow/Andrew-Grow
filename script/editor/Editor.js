@@ -1,7 +1,7 @@
 import Brick from "../game/Brick.js"
 import Drawer from "../game/Drawer.js"
 import Field from "../game/Field.js"
-import { mapToBricks, getBlankMap, bricksToSave, saveToBricks, saveToMap, getCompressedSave, getMegaCompressedSave } from "../utils/map.js"
+import { mapToBricks, getBlankMap, bricksToSave, saveToBricks, saveToMap, getCompressedSave, getMap } from "../utils/map.js"
 
 
 
@@ -147,9 +147,9 @@ export default class Editor {
 	}
 
 	save() {
-		const saveData = getMegaCompressedSave(this.bricks, this.field.mapSize);
-		const filename = 'map.json';
-		const file = new Blob([saveData], { type: 'application/json' });
+		const saveData = getCompressedSave(this.bricks, this.field.mapSize);
+		const filename = 'map.bbmap';
+		const file = new Blob([saveData], { type: 'text/plain;charset=UTF-8' });
 
 		const a = document.createElement('a');
 		a.href = URL.createObjectURL(file);
@@ -184,7 +184,7 @@ export default class Editor {
 			const contents = reader.result
 			// do the thing
 			if (contents) {
-				this.initMap(saveToMap(contents))
+				this.initMap(getMap(contents))
 			}
 			//reset file input
 			e.target.value = ''
