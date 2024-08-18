@@ -1,0 +1,102 @@
+input {
+	box-sizing: border-box;
+}
+
+.col {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.row {
+	display: flex;
+	flex-direction: row;
+}
+
+.input {
+	width: 360px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 16px;
+}
+
+.divider {
+	border-bottom: 1px solid lightgray;
+}
+
+.input .color {
+	display: flex;
+	flex-direction: row;
+	gap: 8px;
+}
+
+.input span {
+	flex: 1 0 0;
+}
+
+.input .color input {
+	width: 48px;
+	flex: 0 0 48px;
+}
+
+.input .steps {
+	display: flex;
+	flex-direction: row;
+	gap: 8px;
+}
+
+.input .steps input {
+	width: 160px;
+}
+
+.colorSample {
+	width: 64px;
+	height: 64px;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	cursor: pointer;
+	box-sizing: border-box;
+
+	border: 2px transparent;
+}
+
+.colorSample:active {
+	border: 2px solid black;
+}
+
+#output {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 8px;
+
+	padding: 16px;
+}
+
+.sampleBlock {
+	width: 100%;
+	height: 480px;
+
+	display: flex;
+	flex-direction: row;
+	gap: 40px;
+	align-items: center;
+
+	background: lightgray;
+	border-radius: 4px;
+}
+
+.innerBlock-1,
+.innerBlock-2 {
+	background: silver;
+	width: 360px;
+}
+
+canvas {
+	border: 1px solid black;
+	/* background: #eeeeee; */
+}

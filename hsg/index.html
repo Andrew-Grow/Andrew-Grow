@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Perfect semitones</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+	<div class="row">
+		<div class="input">
+			<div class="color">
+				<span>Target color</span>
+				<input id="hue" type="number" placeholder="H">
+				<input id="saturation" type="number" placeholder="S">
+				<input id="brightness" type="number" placeholder="B">
+			</div>
+			<div class="col">
+				<h3>Generate palette</h3>
+				<div class="steps">
+					<span>Number of shades</span>
+					<input id="shadesNumber" type="number">
+				</div>
+				<button id="generateShades">Generate</button>
+			</div>
+			<div class="col">
+				<h3>Generate shade</h3>
+				<div class="steps">
+					<span>Shade position</span>
+					<input id="shadePosition" type="number">
+				</div>
+				<button id="generateShade">Generate</button>
+			</div>
+			<div class="col">
+				<h3>HSG palette</h3>
+				<div class="color">
+					<span>Target color</span>
+					<input id="hHSG" type="number" placeholder="H">
+					<input id="sHSG" type="number" placeholder="S">
+					<input id="gHSG" type="number" placeholder="G">
+				</div>
+				<div class="steps">
+					<span>Number of shades</span>
+					<input id="nHSG" type="number">
+				</div>
+				<button id="getHSG">Generate</button>
+			</div>
+			<div class="divider"></div>
+			<button id="reset">Reset result</button>
+		</div>
+
+		<canvas style="width: 400px; height: 400px" id="canvas" width="1000" height="1000"></canvas>
+	</div>
+
+	<div id="output">
+	</div>
+
+	<!-- <script src="script.js"></script> -->
+	<script src="./index.js" type="module"></script>
+</body>
+
+</html>
